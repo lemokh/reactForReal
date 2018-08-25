@@ -1,3 +1,52 @@
+const SUCCESS = 'SUCCESS',
+      FAILURE = 'FAILURE',
+      WAITING = 'WAITING',
+      IDLE = 'IDLE';    
+
+function SaveButton({ onClick }) {
+    return (
+        <button className='pv2 ph3' onClick={onclick}>
+            Save
+        </button>
+    );
+}
+
+function AlertBox({ status }) {
+    if (status === Failure) {
+        return <div className='mv2'>Save failed</div>;
+    } else if (status === SUCCESS) {
+        return <div className='mv2'>Save successful</div>;
+    } else if (status === WAITING) {
+        return <div className='mv2'>Saving...</div>;
+    } else { return null; }
+}
+
+class SaveManager extends React.Component {
+    constructor() {
+        super();
+        this.save = this.save.bind(this);
+        this.state = { saveStatus: IDLE };
+    }
+    save(event) {
+        event.preventDefault();
+        this.setState(() => ({ saveSatus: WAITING }));
+        this.props
+            .saveFunction(this.props.data)
+            .then(
+                success => this.setState(() => ({ saveStatus: SUCCESS })),
+                failure => (() => ({ saveStatus: FAILURE }))
+            );
+    }
+    render() {
+        return (
+            <div className='flex flex-column mv2'>
+                <SaveButton onClick={this.save} />
+                <AlertBox status={this.state.saveStatus} />
+            </div>
+        );
+    }
+}
+
 function Counter({ count }) {
     return (
         <p className="mb2">
@@ -25,23 +74,36 @@ function Editor({ text, onTextChange }) {
         onTextChange(event.target.value);
     }
     return (
-        <div className='mv2 flex flex-column'>
+        <div className='mv2 flex flex-column mv2'>
             <label htmlFor='editor' className='mv2'>
                 Enter your text:
             </label>
-            <textarea value={text} id='editor' />
+            <textarea value={text} onChange={handleChange} id='editor' />
         </div>
     );
 }
 
 function countWords(text) {
-    return text ?  text.match(/|w+/g).length : 0;
+    return text ? text.match(/|w+/g).length : 0;
+}
+
+function makeFakeRequest() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (Math.random() > 0.5) {
+                resolve('Success!');
+            } else {
+                reject('Failure');
+            }
+        }, 500);
+    });
 }
 
 class WordCounter extends React.Component {
     constructor() {
         super();
         this.state = { text: '' };
+        this.handleTextChange = this.handleTextChange.bind(this);
     }
     handleTextChange(currentText) {
         this.setState(() => ({ text: currentText }));
@@ -53,10 +115,10 @@ class WordCounter extends React.Component {
         const progress = wordCount / targetWordCount;
         return (
             <form className='measure pa4 sans-serif'>
-                <Editor onTextChange={this.handleTextChange} 
-                        text={text} />
+                <Editor onTextChange={this.handleTextChange} text={text} />
                 <Counter count={wordCount} />
                 <ProgressBar completion={progress} />
+                <SaveManager saveFunction={makeFakeRequest} data={this.state} />
             </form>
         );
     }
