@@ -1,0 +1,23 @@
+{
+  "name": "reactForReal",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Adder.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lemokh/reactForReal.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lemokh/reactForReal/issues"
+  },
+  "homepage": "https://github.com/lemokh/reactForReal#readme",
+  "devDependencies": {
+    "webpack": "^4.17.1"
+  }
+}
